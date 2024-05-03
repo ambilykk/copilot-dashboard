@@ -1,0 +1,108 @@
+<div class="container" fxLayout="row" fxLayoutGap="25px">
+
+    <mat-card class="mainCard">
+        <mat-card-header>
+            <mat-card-title class="header">Organization: {{orgName}}</mat-card-title>
+            <mat-card-subtitle>Copilot Usage data at organization level</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <!-- Summary Cards displaying numbers-->
+        <div class="card-container">
+            <mat-card class="summary-card" *ngFor="let card of cards">
+                <mat-card-header>
+                    <mat-card-title>{{card.title}}</mat-card-title>
+                    <mat-card-subtitle><h1>{{card.subtitle}}</h1></mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>
+                        {{card.content}}
+                    </p>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <mat-tab-group class="my-tab-group"  (selectedTabChange)="onTabClick($event)">
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <span class="my-tab-label-class">Copilot Code Completion Metrics</span>
+                </ng-template>
+                <div>
+                    <mat-card class="dash-card">
+                        <mat-card-header>
+                            <mat-card-title>Number of Lines Suggested vs Accepted</mat-card-title>
+                            <mat-card-subtitle><i>Double click the bar to drill down</i></mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="chart-container">
+                                <canvas id="org-summary-chart">{{ chart }}</canvas>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card class="dash-card">
+                        <mat-card-header>
+                            <mat-card-title>Active Users</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="chart-container">
+                                <canvas id="org-users-chart">{{ chart }}</canvas>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card class="dash-card">
+                        <mat-card-header>
+                            <mat-card-title>{{langTitle}}</mat-card-title>
+                            <mat-card-subtitle>{{dateSelected}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="chart-container">
+                                <canvas id="lang-chart">{{ chart }}</canvas>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card class="editor-card">
+                        <mat-card-header>
+                            <mat-card-title>{{editorTitle}}</mat-card-title>
+                            <mat-card-subtitle>{{dateSelected}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="chart-container">
+                                <canvas id="editor-chart">{{ chart }}</canvas>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+
+            <mat-tab> 
+                <ng-template mat-tab-label>
+                    <span class="my-tab-label-class">Copilot Chat Metrics</span>
+                </ng-template>
+                <ng-template matTabContent>
+                    <mat-card class="dash-card">
+                        <mat-card-header>
+                            <mat-card-title>Number of Chat Turns vs Acceptance</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="chart-container">
+                                <canvas id="chat-chart">{{ chart }}</canvas>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card class="dash-card">
+                        <mat-card-header>
+                            <mat-card-title>Chat Users</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="chart-container">
+                                <canvas id="chat-users-chart">{{ chart }}</canvas>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </ng-template>
+            </mat-tab>
+
+        </mat-tab-group>
+            
+        </mat-card-content>
+    </mat-card>
+</div>

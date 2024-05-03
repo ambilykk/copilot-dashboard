@@ -1,0 +1,47 @@
+
+.container{
+    margin-bottom: 20px;
+  }
+  .card-container {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .header{
+      color:darkblue;
+      font-size: 30px;
+      font-weight: bold;
+  }
+    
+    .summary-card {
+      width: 300px;
+      height: fit-content;
+      border: 0.4px solid #ccc;
+      margin: 5px;
+    }
+    .summary-card p{
+      font-weight: lighter;
+    }
+  
+    /* Table formatting */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+  
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+  
+    th {
+      background-color: rgb(35, 115, 201);
+      color: white;
+      font-size:large;
+    }
+  
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }

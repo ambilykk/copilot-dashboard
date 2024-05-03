@@ -1,2 +1,57 @@
-# copilot-dashboard
- This repository template offers a comprehensive solution for visualizing metrics related to Copilot usage and seat assignments
+# Copilot Dashboard
+This GitHub repository provides an end-to-end solution for visualizing various Copilot metrics data sourced from APIs. Leveraging GitHub Actions, this solution integrates seamlessly with Copilot Usage and Metrics APIs to generate insightful data visualizations. The repository also utilizes GitHub Pages for hosting the Angular-based Copilot dashboard.
+
+**Features:**
+- Utilizes GitHub Actions for automated workflows.
+- Generates Copilot Usage and Metrics API responses in JSON format.
+- Automates the deployment of the Copilot dashboard to GitHub Pages.
+- Persistently store Coilot Metrics API response data over time in a JSON file format.
+
+## Execution Flow
+
+
+
+
+
+1. **Initial Setup:**
+   - Create a new repository based on this template.
+   - Generate a Personal Access Token (PAT) with appropriate scopes (Fine-grained token with `GitHub Copilot Business - Access: Read and write`).
+   - Store the PAT token as a repository secret named `ORG_TOKEN`.
+   - Create a repository variable named `org_name` to store the organization name.
+
+2. **Trigger Workflow:**
+   - Manually trigger the "Copilot Metrics & Seats API Process" workflow for the first time.
+   - Schedule the workflow to run on a weekly basis for automated data updates. Currently, the workflow is scheduled to run every Friday at 10:00 AM UTC.
+
+3. **Workflow Execution:**
+   - The workflow retrieves Copilot Usage and Metrics API responses and exports them to JSON files.
+   - Upon completion, it triggers another workflow to build and deploy the Angular-based Copilot dashboard.
+   - Please wait for the "Build and deploy Copilot Dashboard into GitHub Pages". workflow to successfully complete before proceeding further. 
+
+4. **Deployment:**
+   - Configure GitHub Pages to deploy from the `gh-pages` branch for hosting the Copilot dashboard.
+    
+    
+   - After configuring the Pages setup, it automatically initiates a new Workflow titled "pages build and deployment". Please wait for this workflow to successfully complete before proceeding further.
+
+5. **Navigation:**
+   - Go to the "Code" tab of the repository and navigate to the "Deployment" section.
+   - Select the GitHub Pages link under "Deployment".
+     
+     
+
+   - The page URL will be available in the deployments page, allowing you to open the dashboard.
+     
+
+## Contributions & License
+
+**Pending Tasks:**
+- [ ] Current implementation of the Copilot Metrics API visualization won't be suitable for metrics for a longer duration like 6 months or 1 year. 
+- [ ] Current implementation focus only on Organization level data. Implement the same for the Enterprise and Teams level.
+- [ ] UI Styling and additional features like filtering based on date selection to enhance the dashboard.
+
+**Contributions:**
+Contributions and feedback are welcome! Feel free to fork this repository, make changes, and submit pull requests.
+
+**License:**
+This repository is licensed under the [MIT License](./LICENSE.md).
