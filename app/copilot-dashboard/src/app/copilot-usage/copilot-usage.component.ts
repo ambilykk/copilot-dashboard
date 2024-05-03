@@ -80,10 +80,10 @@ export class CopilotUsageComponent {
     });
 
     this.cards = [
-      { title: 'Average Active Users', subtitle: Math.round(avgActiveUsers / count), content: 'Average number of Active Users for the last 28 days' },
-      { title: 'Total Suggestions', subtitle: totalSuggestions, content: 'The total number of suggestions offered by Copilot for all developers in last 28 days' },
-      { title: 'Total Acceptance', subtitle: totalAccepted, content: 'The total number of suggestions accepted by users in last 28 days' },
-      { title: 'Acceptance Rate', subtitle: Number((totalAccepted / totalSuggestions * 100).toFixed(2)) + "%", content: 'Percentage of suggestions that were accepted by users in the last 28 days' }
+      { title: 'Average Active Users', subtitle: Math.round(avgActiveUsers / count), content: 'Average number of Active Users' },
+      { title: 'Total Suggestions', subtitle: totalSuggestions, content: 'The total number of suggestions offered by Copilot for all developers' },
+      { title: 'Total Acceptance', subtitle: totalAccepted, content: 'The total number of suggestions accepted by users' },
+      { title: 'Acceptance Rate', subtitle: Number((totalAccepted / totalSuggestions * 100).toFixed(2)) + "%", content: 'Percentage of suggestions that were accepted by users' }
     ];
 
     this.createChart();
