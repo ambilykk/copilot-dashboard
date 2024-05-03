@@ -9,8 +9,7 @@ This GitHub repository provides an end-to-end solution for visualizing various C
 
 ## Execution Flow
 
-
-
+![cp dashboard flow](https://github.com/ambilykk/copilot-dashboard/assets/10282550/111ff71b-9eef-4f1c-ab74-083acafd0273)
 
 
 1. **Initial Setup:**
@@ -30,7 +29,7 @@ This GitHub repository provides an end-to-end solution for visualizing various C
 
 4. **Deployment:**
    - Configure GitHub Pages to deploy from the `gh-pages` branch for hosting the Copilot dashboard.
-    
+   ![gh Pages setup](https://github.com/ambilykk/copilot-dashboard/assets/10282550/63dbd5bc-6eb2-4852-a368-32eb0730d357)
     
    - After configuring the Pages setup, it automatically initiates a new Workflow titled "pages build and deployment". Please wait for this workflow to successfully complete before proceeding further.
 
@@ -38,10 +37,12 @@ This GitHub repository provides an end-to-end solution for visualizing various C
    - Go to the "Code" tab of the repository and navigate to the "Deployment" section.
    - Select the GitHub Pages link under "Deployment".
      
-     
+     ![deployment 1](https://github.com/ambilykk/copilot-dashboard/assets/10282550/9fdeffe5-f834-401f-9ec7-a8393723a032)
+
 
    - The page URL will be available in the deployments page, allowing you to open the dashboard.
-     
+     ![gh deploy](https://github.com/ambilykk/copilot-dashboard/assets/10282550/c74c421f-b482-4592-9646-01b98e266bb0)
+
 
 ## Contributions & License
 
