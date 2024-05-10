@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 10 * * 5'
-         
+
+permissions:
+  contents: write
+          
 jobs:
   first-job:
     runs-on: ubuntu-latest
