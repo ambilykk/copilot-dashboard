@@ -1,0 +1,43 @@
+name: Copilot Metrics & Seats API Process
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 10 * * 5'
+         
+jobs:
+  first-job:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copilot Metrics Retention 
+        uses: ambilykk/copilot-metrics-retention@main
+        with:        
+          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
+          org_name: ${{ vars.org_name }} 
+          json_path: app/copilot-dashboard/src/assets/copilot_metrics_${{ vars.org_name }}.json
+      
+      - name: Copilot usage
+        uses: ambilykk/copilot-usage-report@main
+        with:        
+          GITHUB_TOKEN: ${{secrets.ORG_TOKEN}}
+          org_name: ${{ vars.org_name }} 
+          file_path: app/copilot-dashboard/src/assets/copilot_seats_${{ vars.org_name }}.json
+    
+      - name: Write file names to a text file
+        run: |
+            echo 'copilot_metrics_${{ vars.org_name }}.json' > ./app/copilot-dashboard/src/assets/data.txt
+            echo 'copilot_seats_${{ vars.org_name }}.json' >> ./app/copilot-dashboard/src/assets/data.txt
+            
+
+      - name: Commit and push if it changed
+        run: |
+            git config --global user.name 'Copilot APIs'
+            git config --global user.email 'action@github.com'
+            git add -A
+            git diff --quiet && git diff --staged --quiet || git commit -m "Copilot data update"
+            git push
+      
