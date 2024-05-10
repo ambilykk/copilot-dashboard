@@ -1,0 +1,40 @@
+name: Build and deploy Copilot Dashboard into GitHub Pages
+
+
+on:
+    workflow_dispatch:
+    workflow_run:
+        workflows: ['Copilot Metrics & Seats API Process']
+        types: [completed]
+        branches:
+            - 'main'
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+    
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+    
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+    
+          - name: Install Dependencies
+            run: |
+                cd app/copilot-dashboard
+                npm ci
+    
+          - name: Build
+            run: |
+                cd app/copilot-dashboard
+                npm run build --prod
+    
+         # - name: Test
+          #  run: npm run test
+    
+          - name: Deploy to GitHub Pages
+            uses: JamesIves/github-pages-deploy-action@v4
+            with:
+              branch: gh-pages
+              folder: app/copilot-dashboard/dist/copilot-dashboard/browser
