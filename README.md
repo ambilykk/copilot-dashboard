@@ -11,6 +11,10 @@ This GitHub repository provides an end-to-end solution for visualizing various C
 
 ![cp dashboard flow](https://github.com/ambilykk/copilot-dashboard/assets/10282550/111ff71b-9eef-4f1c-ab74-083acafd0273)
 
+## Setup Video
+
+[![Copilot Dashboard Setup Video](https://img.youtube.com/vi/-3cPBgp59v0/0.jpg)](https://www.youtube.com/watch?v=-3cPBgp59v0)
+
 
 1. **Initial Setup:**
    - Create a new repository based on this template.
