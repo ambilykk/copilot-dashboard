@@ -5,7 +5,7 @@ This GitHub repository provides an end-to-end solution for visualizing various C
 - Utilizes GitHub Actions for automated workflows.
 - Generates Copilot Usage and Metrics API responses in JSON format.
 - Automates the deployment of the Copilot dashboard to GitHub Pages.
-- Persistently store Coilot Metrics API response data over time in a JSON file format.
+- Persistently store Copilot Metrics API response data over time in a JSON file format.
 
 ## Execution Flow
 
