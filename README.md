@@ -1,6 +1,8 @@
 # Copilot Dashboard
 This GitHub repository provides an end-to-end solution for visualizing various Copilot metrics data sourced from APIs. Leveraging GitHub Actions, this solution integrates seamlessly with Copilot Usage and Metrics APIs to generate insightful data visualizations. The repository also utilizes GitHub Pages for hosting the Angular-based Copilot dashboard.
 
+> **Note:** This solution was developed to demonstrate potential use cases and is not intended for production use. If you plan to deploy it in a production environment, please customize it to meet your non-functional requirements (NFRs). This repository is not regularly maintained or updated.
+
 **Features:**
 - Utilizes GitHub Actions for automated workflows.
 - Generates Copilot Usage and Metrics API responses in JSON format.
