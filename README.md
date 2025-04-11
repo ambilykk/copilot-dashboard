@@ -3,7 +3,7 @@ This GitHub repository provides an end-to-end solution for visualizing various C
 
 > **Note:** This solution was developed to demonstrate potential use cases and is not intended for production use. If you plan to deploy it in a production environment, please customize it to meet your non-functional requirements (NFRs). This repository is not regularly maintained or updated.
 
-> We previously used the Copilot Usage API, which has since been deprecated and replaced by the new Copilot Metrics API with an updated schema. While we’ve updated the underlying GitHub Actions to align with the new API, the dashboard code is still referencing fields from the old schema
+> 🔥 We previously used the Copilot Usage API, which has since been deprecated and replaced by the new Copilot Metrics API with an updated schema. While we’ve updated the underlying GitHub Actions to align with the new API, the dashboard code is still referencing fields from the old schema
 
 **Features:**
 - Utilizes GitHub Actions for automated workflows.
