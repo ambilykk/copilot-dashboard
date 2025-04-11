@@ -2,8 +2,8 @@ name: Copilot Metrics & Seats API Process
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 10 * * 5'
+#  schedule:
+#    - cron: '0 10 * * 5'
 
 permissions:
   contents: write
