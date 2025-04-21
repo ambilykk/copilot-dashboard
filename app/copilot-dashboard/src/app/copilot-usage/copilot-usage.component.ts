@@ -66,17 +66,74 @@ export class CopilotUsageComponent {
     var totalAccepted = 0;
     var count = 0;
 
-    // extract the day field from the data
+    // extract the data from the JSON
     this.data.forEach((element: any) => {
-      this.xlabel.push(element.day);
-      this.total_lines_suggested.push(element.total_lines_suggested);
-      this.total_lines_accepted.push(element.total_lines_accepted);
+      // Format date from 2025-03-24 to Mar 24
+      const dateObj = new Date(element.date);
+      const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      
+      this.xlabel.push(formattedDate);
+      
+      // Get data from copilot_ide_code_completions which contains the code completions data
+      let totalLinesSuggested = 0;
+      let totalLinesAccepted = 0;
+      
+      // If the element has IDE code completions data with editors
+      if (element.copilot_ide_code_completions && 
+          element.copilot_ide_code_completions.editors) {
+        
+        // Loop through each editor
+        element.copilot_ide_code_completions.editors.forEach((editor: any) => {
+          // Check if editor has models
+          if (editor.models) {
+            // Loop through each model
+            editor.models.forEach((model: any) => {
+              // Check if model has languages
+              if (model.languages) {
+                // Loop through each language
+                model.languages.forEach((language: any) => {
+                  // Add lines suggested and accepted
+                  if (language.total_code_lines_suggested) {
+                    totalLinesSuggested += language.total_code_lines_suggested;
+                  }
+                  if (language.total_code_lines_accepted) {
+                    totalLinesAccepted += language.total_code_lines_accepted;
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+      
+      this.total_lines_suggested.push(totalLinesSuggested);
+      this.total_lines_accepted.push(totalLinesAccepted);
       this.total_active_users.push(element.total_active_users);
 
       count += 1;
       avgActiveUsers += element.total_active_users;
-      totalSuggestions += element.total_suggestions_count;
-      totalAccepted += element.total_acceptances_count;
+      
+      // Calculate total suggestions and acceptances if possible
+      if (element.copilot_ide_code_completions && 
+          element.copilot_ide_code_completions.editors) {
+        
+        element.copilot_ide_code_completions.editors.forEach((editor: any) => {
+          if (editor.models) {
+            editor.models.forEach((model: any) => {
+              if (model.languages) {
+                model.languages.forEach((language: any) => {
+                  if (language.total_code_suggestions) {
+                    totalSuggestions += language.total_code_suggestions;
+                  }
+                  if (language.total_code_acceptances) {
+                    totalAccepted += language.total_code_acceptances;
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
     });
 
     this.cards = [
@@ -148,19 +205,20 @@ export class CopilotUsageComponent {
     if (points.length) {
       const firstPoint = points[0];
       const label = evt.chart.data.labels[firstPoint.index];
-      this.dateSelected = "Selected Date:  " + label;
+      this.dateSelected = "Selected Date: " + label;
 
       // find the data for the selected label
       var orgData = JSON.parse(sessionStorage.getItem('orgData') || '{}');
-      var innerData: any = "";
-
-      for (let element of orgData) {
-        if (element.day == label) {
-          innerData = element.breakdown;
-          break;
-        }
+      
+      // Find the clicked date data
+      const clickedDateIndex = this.xlabel.indexOf(label);
+      if (clickedDateIndex === -1 || !orgData[clickedDateIndex]) {
+        return;
       }
-
+      
+      const selectedDateData = orgData[clickedDateIndex];
+      
+      // Initialize the arrays for language and editor data
       var xLangLabel: any = [];
       var lang_lines_suggested: any = [];
       var lang_lines_accepted: any = [];
@@ -171,44 +229,124 @@ export class CopilotUsageComponent {
       var editor_lines_accepted: any = [];
       var editor_active_users: any = [];
 
-      innerData.forEach((element: any) => {
-        if (xLangLabel.indexOf(element.language) == -1) {
-          xLangLabel.push(element.language);
-          lang_lines_suggested.push(element.lines_suggested);
-          lang_lines_accepted.push(element.lines_accepted);
-          lang_active_users.push(element.active_users);
-        } else {
-          lang_lines_suggested[xLangLabel.indexOf(element.language)] += element.lines_suggested;
-          lang_lines_accepted[xLangLabel.indexOf(element.language)] += element.lines_accepted;
-          lang_active_users[xLangLabel.indexOf(element.language)] += element.active_users;
-        }
-      });
+      // Extract language data from the clicked date
+      if (selectedDateData.copilot_ide_code_completions && 
+          selectedDateData.copilot_ide_code_completions.languages) {
+            
+        selectedDateData.copilot_ide_code_completions.languages.forEach((lang: any) => {
+          if (lang.name) {
+            xLangLabel.push(lang.name);
+            // Add values if available, otherwise add 0
+            lang_lines_suggested.push(0); // Default value if not available
+            lang_lines_accepted.push(0); // Default value if not available 
+            lang_active_users.push(lang.total_engaged_users || 0);
+          }
+        });
+      }
+      // If languages are nested under editors and models
+      else if (selectedDateData.copilot_ide_code_completions && 
+              selectedDateData.copilot_ide_code_completions.editors) {
+        // Create a map to aggregate language data
+        const langMap = new Map();
+                
+        // Loop through editors
+        selectedDateData.copilot_ide_code_completions.editors.forEach((editor: any) => {
+          if (editor.models) {
+            // Loop through models
+            editor.models.forEach((model: any) => {
+              if (model.languages) {
+                // Loop through languages
+                model.languages.forEach((lang: any) => {
+                  if (lang.name) {
+                    // If language already exists in map, update values
+                    if (langMap.has(lang.name)) {
+                      const existing = langMap.get(lang.name);
+                      langMap.set(lang.name, {
+                        total_engaged_users: (existing.total_engaged_users || 0) + (lang.total_engaged_users || 0),
+                        total_code_lines_suggested: (existing.total_code_lines_suggested || 0) + (lang.total_code_lines_suggested || 0),
+                        total_code_lines_accepted: (existing.total_code_lines_accepted || 0) + (lang.total_code_lines_accepted || 0)
+                      });
+                    } else {
+                      // Add new language to map
+                      langMap.set(lang.name, {
+                        total_engaged_users: lang.total_engaged_users || 0,
+                        total_code_lines_suggested: lang.total_code_lines_suggested || 0,
+                        total_code_lines_accepted: lang.total_code_lines_accepted || 0
+                      });
+                    }
+                  }
+                });
+              }
+            });
+          }
+        });
+        
+        // Convert map to arrays for the chart
+        langMap.forEach((value, key) => {
+          xLangLabel.push(key);
+          lang_lines_suggested.push(value.total_code_lines_suggested);
+          lang_lines_accepted.push(value.total_code_lines_accepted);
+          lang_active_users.push(value.total_engaged_users);
+        });
+      }
 
-      innerData.forEach((element: any) => {
-        if (xEditorLabel.indexOf(element.editor) == -1) {
-          xEditorLabel.push(element.editor);
-          editor_lines_suggested.push(element.lines_suggested);
-          editor_lines_accepted.push(element.lines_accepted);
-          editor_active_users.push(element.active_users);
-        } else {
-          editor_lines_suggested[xEditorLabel.indexOf(element.editor)] += element.lines_suggested;
-          editor_lines_accepted[xEditorLabel.indexOf(element.editor)] += element.lines_accepted;
-          editor_active_users[xEditorLabel.indexOf(element.editor)] += element.active_users;
-        }
-
-      });
+      // Extract editor data
+      if (selectedDateData.copilot_ide_code_completions && 
+          selectedDateData.copilot_ide_code_completions.editors) {
+        
+        const editorMap = new Map();
+        
+        selectedDateData.copilot_ide_code_completions.editors.forEach((editor: any) => {
+          if (editor.name) {
+            let totalLinesSuggested = 0;
+            let totalLinesAccepted = 0;
+            
+            // Go through models if available
+            if (editor.models) {
+              editor.models.forEach((model: any) => {
+                if (model.languages) {
+                  model.languages.forEach((lang: any) => {
+                    totalLinesSuggested += (lang.total_code_lines_suggested || 0);
+                    totalLinesAccepted += (lang.total_code_lines_accepted || 0);
+                  });
+                }
+              });
+            }
+            
+            // If editor already exists in map, update values
+            if (editorMap.has(editor.name)) {
+              const existing = editorMap.get(editor.name);
+              editorMap.set(editor.name, {
+                total_engaged_users: (existing.total_engaged_users || 0) + (editor.total_engaged_users || 0),
+                total_lines_suggested: existing.total_lines_suggested + totalLinesSuggested,
+                total_lines_accepted: existing.total_lines_accepted + totalLinesAccepted
+              });
+            } else {
+              // Add new editor to map
+              editorMap.set(editor.name, {
+                total_engaged_users: editor.total_engaged_users || 0,
+                total_lines_suggested: totalLinesSuggested,
+                total_lines_accepted: totalLinesAccepted
+              });
+            }
+          }
+        });
+        
+        // Convert map to arrays for the chart
+        editorMap.forEach((value, key) => {
+          xEditorLabel.push(key);
+          editor_lines_suggested.push(value.total_lines_suggested);
+          editor_lines_accepted.push(value.total_lines_accepted);
+          editor_active_users.push(value.total_engaged_users);
+        });
+      }
 
       // chart for language breakdown
       this.languageChart(xLangLabel, lang_lines_suggested, lang_lines_accepted);
 
-      // chart for Active Users breakdown - language wise and editor wise
-      //this.langAndEditorUserChart(xLangLabel, lang_active_users, xEditorLabel, editor_active_users);
-
       // chart for editor breakdown
       this.editorDetChart(xEditorLabel, editor_lines_suggested, editor_lines_accepted);
-
     }
-
   }
 
   languageChart(xLangLabel: any, lang_lines_suggested: any, lang_lines_accepted: any): void {
@@ -314,7 +452,6 @@ export class CopilotUsageComponent {
     });
   }
 
-
   onTabClick = (evt: MatTabChangeEvent): void => {
     
     if (evt.index === 0){
@@ -328,10 +465,50 @@ export class CopilotUsageComponent {
       this.total_active_chat_users = [];
 
       orgData.forEach((element: any) => {
-        this.xChatLabel.push(element.day);
-        this.total_chat_turns.push(element.total_chat_turns);
-        this.total_chat_acceptances.push(element.total_chat_acceptances);
-        this.total_active_chat_users.push(element.total_active_chat_users);
+        // Format date from 2025-03-24 to Mar 24
+        const dateObj = new Date(element.date);
+        const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        this.xChatLabel.push(formattedDate);
+        
+        // Get chat metrics
+        let totalChatTurns = 0;
+        let totalChatCopy = 0;
+        let totalChatInsertions = 0;
+        
+        // Check for IDE chat
+        if (element.copilot_ide_chat && element.copilot_ide_chat.editors) {
+          element.copilot_ide_chat.editors.forEach((editor: any) => {
+            if (editor.models) {
+              editor.models.forEach((model: any) => {
+                totalChatTurns += (model.total_chats || 0);
+                totalChatCopy += (model.total_chat_copy_events || 0);
+                totalChatInsertions += (model.total_chat_insertion_events || 0);
+              });
+            }
+          });
+        }
+        
+        // Check for dotcom chat
+        if (element.copilot_dotcom_chat && element.copilot_dotcom_chat.models) {
+          element.copilot_dotcom_chat.models.forEach((model: any) => {
+            totalChatTurns += (model.total_chats || 0);
+          });
+        }
+        
+        this.total_chat_turns.push(totalChatTurns);
+        // Sum of copy and insertion events as chat acceptances
+        this.total_chat_acceptances.push(totalChatCopy + totalChatInsertions);
+        
+        // Get active chat users (engaged users)
+        let activeChatUsers = 0;
+        if (element.copilot_ide_chat) {
+          activeChatUsers += (element.copilot_ide_chat.total_engaged_users || 0);
+        }
+        if (element.copilot_dotcom_chat) {
+          activeChatUsers += (element.copilot_dotcom_chat.total_engaged_users || 0);
+        }
+        
+        this.total_active_chat_users.push(activeChatUsers);
       });
 
       // If a chart already exists, destroy it
@@ -362,7 +539,12 @@ export class CopilotUsageComponent {
 
       });
 
-      this.chart = new Chart("chat-users-chart", {
+      // If a chart already exists, destroy it
+      if (this.userChart) {
+        this.userChart.destroy();
+      }
+
+      this.userChart = new Chart("chat-users-chart", {
         type: 'line',
 
         data: {
